@@ -183,5 +183,46 @@ class Grid:
             and self.grid[pos.y][pos.x] == self.grid[nb.y][nb.x]
         ]
 
+    def BFS(self, starting_node: POS) -> list[POS]:
+        assert self.is_valid(), f"Invalid {self=}."
+        assert self.is_position_valid(starting_node), f"Invalid {starting_node=}."
+
+        seen_positions: list[POS] = [starting_node]
+        positions_to_check = self.get_neighbors(starting_node)
+        while len(positions_to_check) > 0:
+            curr = positions_to_check.pop()
+
+            if curr not in seen_positions:
+                seen_positions.append(curr)
+                new_positions = self.get_neighbors(curr)
+                positions_to_check += new_positions
+
+        return seen_positions
+
+    @staticmethod
+    def run_template() -> None:
+        grid_data: list[list[int]] = [
+            [1, 0, 1, 1, 0],
+            [0, 1, 0, 0, 0],
+            [1, 1, 1, 1, 1],
+            [0, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0],
+        ]
+        grid = Grid(grid_data)
+        print(grid)
+
+        for pos in grid.BFS(POS(2, 2)):
+            grid.set(pos, 2)
+
+        print()
+        print(grid)
+
+        for pos in grid.BFS(POS(0, 4)):
+            grid[pos.y][pos.x] = 3
+
+        print()
+        print(grid)
+
+
 def main():
     LinkedList.run_template()
