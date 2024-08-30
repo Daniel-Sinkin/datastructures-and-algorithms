@@ -1,4 +1,4 @@
-from typing import Generic, Iterator, Optional, TypeVar
+from typing import Generic, Iterator, NamedTuple, Optional, TypeVar
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -54,6 +54,20 @@ class LinkedList(Generic[T]):
         assert last_node.next is None, f"{last_node.next=} != None!"
         last_node.next = new_node
 
+    @staticmethod
+    def run_template() -> None:
+        int_llist = LinkedList[int]()
+        int_llist.insert_at_beginning(10)
+        int_llist.insert_at_beginning(10)
+        int_llist.insert_at_beginning(10)
+        int_llist.insert_at_beginning(10)
+        int_llist.insert_at_beginning(20)
+
+        for i, n in enumerate(int_llist):
+            print(i, n)
+
+        print(list(int_llist))
+
 
 class Graph:
     def __init__(self, n_vertices: int):
@@ -102,15 +116,72 @@ class Graph:
         return str(self.adj_list)
 
 
+class POS(NamedTuple):
+    y: int
+    x: int
+
+
+class Grid:
+    def __init__(self, grid: list[list[int]]):
+        self.grid: list[list[int]] = grid
+
+    def __repr__(self) -> str:
+        return f"Grid({self.grid})"
+
+    def __str__(self) -> str:
+        return "n".join([str(row) for row in self.grid])
+
+    @property
+    def empty(self) -> bool:
+        return len(self.grid) == 0
+
+    @property
+    def shape(self) -> tuple[int, int]:
+        if self.empty:
+            return True
+        else:
+            return (len(self.grid), len(self.grid[0]))
+
+    @property
+    def y_size(self) -> int:
+        return self.shape[0]
+
+    @property
+    def x_size(self) -> int:
+        return self.shape[1]
+
+    def is_valid(self) -> bool:
+        if self.empty:
+            return True
+
+        first_row = self.grid[0]
+        for row in self.grid[1:]:
+            assert len(row) == len(first_row)
+
+    def is_position_valid(self, pos: POS) -> bool:
+        return (self.y_size > pos.y >= 0) and (self.x_size > pos.x >= 0)
+
+    def get(self, pos: POS) -> int:
+        assert self.is_position_valid(pos)
+        return self.grid[pos.y][pos.x]
+
+    def set(self, pos: POS, val: int) -> None:
+        assert self.is_position_valid(pos)
+        self.grid[pos.y][pos.x] = val
+
+    def get_neighbors(self, pos: POS) -> list[POS]:
+        potential_neighbors: list[POS] = [
+            POS(pos.y - 1, pos.x),
+            POS(pos.y + 1, pos.x),
+            POS(pos.y, pos.x - 1),
+            POS(pos.y, pos.x + 1),
+        ]
+        return [
+            nb
+            for nb in potential_neighbors
+            if self.is_position_valid(nb)
+            and self.grid[pos.y][pos.x] == self.grid[nb.y][nb.x]
+        ]
+
 def main():
-    int_llist = LinkedList[int]()
-    int_llist.insert_at_beginning(10)
-    int_llist.insert_at_beginning(10)
-    int_llist.insert_at_beginning(10)
-    int_llist.insert_at_beginning(10)
-    int_llist.insert_at_beginning(20)
-
-    for i, n in enumerate(int_llist):
-        print(i, n)
-
-    print(list(int_llist))
+    LinkedList.run_template()
