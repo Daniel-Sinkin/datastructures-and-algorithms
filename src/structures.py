@@ -56,6 +56,7 @@ class LinkedList(Generic[T]):
 
     @staticmethod
     def run_template() -> None:
+        print("\nLinkedList Template")
         int_llist = LinkedList[int]()
         int_llist.insert_at_beginning(10)
         int_llist.insert_at_beginning(10)
@@ -121,15 +122,15 @@ class POS(NamedTuple):
     x: int
 
 
-class Grid:
-    def __init__(self, grid: list[list[int]]):
-        self.grid: list[list[int]] = grid
+class Grid(Generic[T]):
+    def __init__(self, grid: list[list[T]]):
+        self.grid: list[list[T]] = grid
 
     def __repr__(self) -> str:
         return f"Grid({self.grid})"
 
     def __str__(self) -> str:
-        return "n".join([str(row) for row in self.grid])
+        return "\n".join([str(row) for row in self.grid])
 
     @property
     def empty(self) -> bool:
@@ -156,16 +157,19 @@ class Grid:
 
         first_row = self.grid[0]
         for row in self.grid[1:]:
-            assert len(row) == len(first_row)
+            if len(row) != len(first_row):
+                return False
+
+        return True
 
     def is_position_valid(self, pos: POS) -> bool:
         return (self.y_size > pos.y >= 0) and (self.x_size > pos.x >= 0)
 
-    def get(self, pos: POS) -> int:
+    def get(self, pos: POS) -> T:
         assert self.is_position_valid(pos)
         return self.grid[pos.y][pos.x]
 
-    def set(self, pos: POS, val: int) -> None:
+    def set(self, pos: POS, val: T) -> None:
         assert self.is_position_valid(pos)
         self.grid[pos.y][pos.x] = val
 
@@ -179,8 +183,7 @@ class Grid:
         return [
             nb
             for nb in potential_neighbors
-            if self.is_position_valid(nb)
-            and self.grid[pos.y][pos.x] == self.grid[nb.y][nb.x]
+            if self.is_position_valid(nb) and self.get(pos) == self.get(nb)
         ]
 
     def BFS(self, starting_node: POS) -> list[POS]:
@@ -201,6 +204,7 @@ class Grid:
 
     @staticmethod
     def run_template() -> None:
+        print("\nGrid Template")
         grid_data: list[list[int]] = [
             [1, 0, 1, 1, 0],
             [0, 1, 0, 0, 0],
@@ -218,7 +222,7 @@ class Grid:
         print(grid)
 
         for pos in grid.BFS(POS(0, 4)):
-            grid[pos.y][pos.x] = 3
+            grid.set(pos, 3)
 
         print()
         print(grid)
@@ -226,3 +230,8 @@ class Grid:
 
 def main():
     LinkedList.run_template()
+    Grid.run_template()
+
+
+if __name__ == "__main__":
+    main()
