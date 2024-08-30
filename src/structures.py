@@ -117,7 +117,7 @@ class Graph:
         return str(self.adj_list)
 
 
-class POS(NamedTuple):
+class Position(NamedTuple):
     y: int
     x: int
 
@@ -162,23 +162,23 @@ class Grid(Generic[T]):
 
         return True
 
-    def is_position_valid(self, pos: POS) -> bool:
+    def is_position_valid(self, pos: Position) -> bool:
         return (self.y_size > pos.y >= 0) and (self.x_size > pos.x >= 0)
 
-    def get(self, pos: POS) -> T:
+    def get(self, pos: Position) -> T:
         assert self.is_position_valid(pos)
         return self.grid[pos.y][pos.x]
 
-    def set(self, pos: POS, val: T) -> None:
+    def set(self, pos: Position, val: T) -> None:
         assert self.is_position_valid(pos)
         self.grid[pos.y][pos.x] = val
 
-    def get_neighbors(self, pos: POS) -> list[POS]:
-        potential_neighbors: list[POS] = [
-            POS(pos.y - 1, pos.x),
-            POS(pos.y + 1, pos.x),
-            POS(pos.y, pos.x - 1),
-            POS(pos.y, pos.x + 1),
+    def get_neighbors(self, pos: Position) -> list[Position]:
+        potential_neighbors: list[Position] = [
+            Position(pos.y - 1, pos.x),
+            Position(pos.y + 1, pos.x),
+            Position(pos.y, pos.x - 1),
+            Position(pos.y, pos.x + 1),
         ]
         return [
             nb
@@ -186,11 +186,11 @@ class Grid(Generic[T]):
             if self.is_position_valid(nb) and self.get(pos) == self.get(nb)
         ]
 
-    def BFS(self, starting_node: POS) -> list[POS]:
+    def BFS(self, starting_node: Position) -> list[Position]:
         assert self.is_valid(), f"Invalid {self=}."
         assert self.is_position_valid(starting_node), f"Invalid {starting_node=}."
 
-        seen_positions: list[POS] = [starting_node]
+        seen_positions: list[Position] = [starting_node]
         positions_to_check = self.get_neighbors(starting_node)
         while len(positions_to_check) > 0:
             curr = positions_to_check.pop()
@@ -215,13 +215,13 @@ class Grid(Generic[T]):
         grid = Grid(grid_data)
         print(grid)
 
-        for pos in grid.BFS(POS(2, 2)):
+        for pos in grid.BFS(Position(2, 2)):
             grid.set(pos, 2)
 
         print()
         print(grid)
 
-        for pos in grid.BFS(POS(0, 4)):
+        for pos in grid.BFS(Position(0, 4)):
             grid.set(pos, 3)
 
         print()
