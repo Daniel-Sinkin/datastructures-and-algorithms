@@ -14,6 +14,7 @@ set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
 set(INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
 
 file(GLOB SOURCES "${SRC_DIR}/*.cpp")
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES}
+        src/main.c)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
