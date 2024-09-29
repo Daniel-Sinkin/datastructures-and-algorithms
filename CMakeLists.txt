@@ -1,25 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
+project(DSAL C)
 
-project(DSAL)
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64" OR CMAKE_OSX_ARCHITECTURES MATCHES "arm64")
-    set(CMAKE_OSX_ARCHITECTURES "arm64")
+if (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    add_compile_options(-Wall -Wextra -pedantic)
+elseif (MSVC)
+    add_compile_options(/W4)
 endif()
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    set(ALL_WARNINGS "-Wall" "-Wextra" "-Wpedantic")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(ALL_WARNINGS "/W4" "/permissive-")
-endif()
+set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
+set(INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
 
-add_executable(DSAL src/main.cpp)
+file(GLOB SOURCES "${SRC_DIR}/*.cpp")
+add_executable(${PROJECT_NAME} ${SOURCES})
 
-# Ensure the correct standard library is used and add warnings
-target_compile_options(DSAL PRIVATE -stdlib=libc++ ${ALL_WARNINGS})
-
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build, options are: Debug Release" FORCE)
-endif()
+target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
